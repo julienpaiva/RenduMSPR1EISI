@@ -7,7 +7,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.compose import ColumnTransformer
 from tensorflow.keras.optimizers import Adam
 
-# Charger et préparer les données
+# Charger et préparer les données, on drop la colonne 'nom' puisque c'est la cible et la colonne 'sexe' puisqu'elle n'apporte rien
 data = pd.read_csv('donneespropre.csv', sep=';')
 X = data.drop(columns=['nom', 'sexe'])
 y = data['nom']
@@ -26,7 +26,7 @@ preprocessor = ColumnTransformer(
 # Appliquer le transformateur aux données
 X = preprocessor.fit_transform(X)
 
-# Diviser les données en ensembles d'entraînement et de test
+# On Divise les données en ensembles d'entraînement et de test en ratio 80 / 20
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Standardiser les caractéristiques
@@ -40,11 +40,14 @@ y_test = to_categorical(y_test, num_classes=11)
 
 # Construire le modèle de réseau neuronal avec une architecture simplifiée
 model = Sequential()
+# 1ere couche, couche d'entrée
 model.add(Dense(6, input_dim=X_train.shape[1], activation='relu'))
+# 2eme couche, couche intermediaire
 model.add(Dense(4, activation='relu'))
+# 3eme couche, couche de sortie
 model.add(Dense(11, activation='softmax'))
 
-# Compiler le modèle avec un taux d'apprentissage plus élevé
+# Ici on compile le modèle
 #optimizer = Adam(learning_rate=0.01)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
